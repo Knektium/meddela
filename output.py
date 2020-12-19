@@ -6,7 +6,7 @@ from sys import stdout
 from time import sleep
 from random import getrandbits, randrange
 
-from networking import Message
+from meddela import Message
 
 
 def hexstr(integer, chars=2):

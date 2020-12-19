@@ -9,7 +9,7 @@ import json
 import serial
 import urwid
 
-from networking import (
+from meddela import (
     Message,
     Enum,
 )
