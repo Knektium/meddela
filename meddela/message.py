@@ -51,7 +51,7 @@ class Signal:
             }
 
     @classmethod
-    def get_signal_from_json(cls, data):
+    def get_from_json(cls, data):
         name = data["name"]
         size = int(data["size"], 16)
         offset = int(data["offset"], 16)
@@ -102,7 +102,7 @@ class Message:
         return self.get_id()
 
     @classmethod
-    def get_message_from_json(cls, data):
+    def get_from_json(cls, data):
         id = int(data["id"], 16)
         name = data["name"]
         priority = int(data["priority"], 16)
@@ -115,21 +115,21 @@ class Message:
         )
     
         for signal_data in signals:
-            message.add_signal(Signal.get_signal_from_json(signal_data))
+            message.add_signal(Signal.get_from_json(signal_data))
     
         return message
 
     @staticmethod
     def get_id_from_can_id(can_id):
-        return (can_id & (0xFF << MSG_ID_OFFSET)) >> MSG_ID_OFFSET
+        return (can_id >> MSG_ID_OFFSET) & 0xFF
 
     @staticmethod
     def get_receiver_from_can_id(can_id):
-        return (can_id & (0xFF << TO_NODE_ID_OFFSET)) >> TO_NODE_ID_OFFSET
+        return (can_id >> TO_NODE_ID_OFFSET) & 0xFF
 
     @staticmethod
     def get_sender_from_can_id(can_id):
-        return (can_id & (0xFF << FROM_NODE_ID_OFFSET)) >> FROM_NODE_ID_OFFSET
+        return (can_id >> FROM_NODE_ID_OFFSET) & 0xFF
 
     def get_signal_values_from_data(self, data):
         return {
@@ -167,7 +167,7 @@ class Node:
         self.tx_messages.append(message)
 
     @classmethod
-    def get_node_from_json(cls, data, messages):
+    def get_from_json(cls, data, messages):
         name = data["name"]
         rx_messages = data["rx"]
         tx_messages = data["tx"]

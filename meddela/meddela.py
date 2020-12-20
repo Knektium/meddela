@@ -15,6 +15,9 @@ from .message import (
     MSG_ID_OFFSET,
 )
 
+#jinja_env = jinja2.Environment()
+#jinja_env.filters["rx"] = 
+
 
 def main():
     message_file = None
@@ -68,14 +71,14 @@ def main():
         data = json.load(json_data)
 
         for message_data in data:
-            message = Message.get_message_from_json(message_data)
+            message = Message.get_from_json(message_data)
             messages[message.name] = message
 
     with open(node_file) as json_data:
         data = json.load(json_data)
 
         for node_data in data:
-            node = Node.get_node_from_json(node_data, messages)
+            node = Node.get_from_json(node_data, messages)
             nodes[node.name] = node
 
     with open(config_file) as json_data:
