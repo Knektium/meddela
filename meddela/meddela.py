@@ -108,11 +108,6 @@ def main():
             print(template.render(
                 node_id=hex(node_id),
                 node=node,
-                number_of_messages=len(node_messages),
                 messages=node_messages,
-                message_id_offsets=
-                {
-                    'from_node_id': Message.FROM_ID_OFFSET,
-                    'to_node_id': Message.TO_ID_OFFSET,
-                }
+                Message=Message,
             ))
