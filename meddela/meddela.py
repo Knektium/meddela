@@ -4,7 +4,16 @@ import getopt
 import json
 import jinja2
 
-from .message import Signal, Node, Message
+from .message import (
+    Signal,
+    Node,
+    Message,
+    NODE_ID_SIZE,
+    FROM_NODE_ID_OFFSET,
+    TO_NODE_ID_OFFSET,
+    MSG_ID_SIZE,
+    MSG_ID_OFFSET,
+)
 
 
 def main():
@@ -109,5 +118,9 @@ def main():
                 node_id=hex(node_id),
                 node=node,
                 messages=node_messages,
-                Message=Message,
+                MSG_ID_SIZE=MSG_ID_SIZE,
+                MSG_ID_OFFSET=MSG_ID_OFFSET,
+                NODE_ID_SIZE=NODE_ID_SIZE,
+                FROM_NODE_ID_OFFSET=FROM_NODE_ID_OFFSET,
+                TO_NODE_ID_OFFSET=TO_NODE_ID_OFFSET,
             ))

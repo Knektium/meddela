@@ -163,4 +163,6 @@ The template context has the following values:
     node_id             Node ID (hexadecimal string)
     node                Node object
     messages            List of Message objects
-    Message             The Message class
+    MSG_ID_OFFSET       Position of the 8-bit message ID in the 29-bit CAN message ID
+    FROM_NODE_ID_OFFSET Position of the 8-bit sender node ID in the 29-bit CAN message ID
+    TO_NODE_ID_OFFSET   Position of the 8-bit recipient node ID in the 29-bit CAN message ID

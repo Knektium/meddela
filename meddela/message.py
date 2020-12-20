@@ -1,3 +1,8 @@
+NODE_ID_SIZE = 8
+FROM_NODE_ID_OFFSET = 4
+TO_NODE_ID_OFFSET = 12
+MSG_ID_SIZE = 8
+MSG_ID_OFFSET = 20
 
 class Signal:
     def __init__(self, name, offset, size, display_type="Hex", endianness="little"):
@@ -70,10 +75,6 @@ class Signal:
         return value
 
 class Message:
-    FROM_ID_OFFSET = 4
-    TO_ID_OFFSET = 12 
-    ID_OFFSET = 20
-
     def __init__(self, id, name, priority):
         self.id = id
         self.name = name
@@ -84,13 +85,13 @@ class Message:
         self.signals.append(signal)
 
     def get_mask(self):
-        return self.id << Message.ID_OFFSET
+        return self.id << MSG_ID_OFFSET
 
     def get_id(self, from_node_id=0, to_node_id=0):
         return (
-            (self.id << Message.ID_OFFSET) +
-            (to_node_id << Message.TO_ID_OFFSET) +
-            (from_node_id << Message.FROM_ID_OFFSET) +
+            (self.id << MSG_ID_OFFSET) +
+            (to_node_id << TO_NODE_ID_OFFSET) +
+            (from_node_id << FROM_NODE_ID_OFFSET) +
             self.priority
         )
 
@@ -118,17 +119,17 @@ class Message:
     
         return message
 
-    @classmethod
-    def get_id_from_can_id(cls, can_id):
-        return (can_id & (0xFF << cls.ID_OFFSET)) >> cls.ID_OFFSET
+    @staticmethod
+    def get_id_from_can_id(can_id):
+        return (can_id & (0xFF << MSG_ID_OFFSET)) >> MSG_ID_OFFSET
 
-    @classmethod
-    def get_receiver_from_can_id(cls, can_id):
-        return (can_id & (0xFF << cls.TO_ID_OFFSET)) >> cls.TO_ID_OFFSET
+    @staticmethod
+    def get_receiver_from_can_id(can_id):
+        return (can_id & (0xFF << TO_NODE_ID_OFFSET)) >> TO_NODE_ID_OFFSET
 
-    @classmethod
-    def get_sender_from_can_id(cls, can_id):
-        return (can_id & (0xFF << cls.FROM_ID_OFFSET)) >> cls.FROM_ID_OFFSET
+    @staticmethod
+    def get_sender_from_can_id(can_id):
+        return (can_id & (0xFF << FROM_NODE_ID_OFFSET)) >> FROM_NODE_ID_OFFSET
 
     def get_signal_values_from_data(self, data):
         return {
