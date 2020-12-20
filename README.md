@@ -5,7 +5,21 @@ Meddela is a command line tool for generating code for CAN node configuration,
 message routing, serializing and more.
 
 As inputs it takes message and signal definitions in JSON format along with a
-jinja2 template.
+Jinja2 template.
+
+The 29-bit CAN message identifier is divided into four parts:
+
+      28       20       12       4    0
+    +-+--------+--------+--------+----+
+    |-| MSG ID | TO     | FROM   | PR |
+    +-+--------+--------+--------+----+
+
+MSG ID: Message ID (8 bits)
+TO:     ID of recipient node (8 bits)
+FROM:   ID of sender node (8 bits)
+PR:     Priority (4 bits)
+
+The most significant bit is unused.
 
 Installation
 ------------
@@ -140,3 +154,13 @@ The output can be piped to a file like this:
 ```sh
 python -m meddela --messages=messages.json --nodes=nodes.json --config=robot.json --id=0x11 --template=structs.c.txt > structs.c
 ```
+
+Template Context
+----------------
+
+The template context has the following values:
+
+    node_id             Node ID (hexadecimal string)
+    node                Node object
+    messages            List of Message objects
+    Message             The Message class
