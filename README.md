@@ -14,10 +14,10 @@ The 29-bit CAN message identifier is divided into four parts:
     |-| MSG ID | TO     | FROM   | PR |
     +-+--------+--------+--------+----+
 
-MSG ID: Message ID (8 bits)
-TO:     ID of recipient node (8 bits)
-FROM:   ID of sender node (8 bits)
-PR:     Priority (4 bits)
+    MSG ID: Message ID (8 bits)
+    TO:     ID of recipient node (8 bits)
+    FROM:   ID of sender node (8 bits)
+    PR:     Priority (4 bits)
 
 The most significant bit is unused.
 
@@ -166,3 +166,23 @@ The template context has the following values:
     MSG_ID_OFFSET       Position of the 8-bit message ID in the 29-bit CAN message ID
     FROM_NODE_ID_OFFSET Position of the 8-bit sender node ID in the 29-bit CAN message ID
     TO_NODE_ID_OFFSET   Position of the 8-bit recipient node ID in the 29-bit CAN message ID
+
+### Examples:
+
+Get the number of messages the node receives and transmitts:
+
+```
+{{ messages|count }}
+```
+
+Loop through all messages and their signals:
+
+```
+{% for message in messages %}
+    typedef struct {{ message.name }}_s {
+    {%- for signal in message.signals %}
+        {{ signal.get_word_size(8) * 8 }}_t {{ signal.name }};
+    {%- endfor %}
+    } {{ message.name }}_t;
+{% endfor -%}
+```
