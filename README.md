@@ -26,10 +26,10 @@ pip install -e meddela
 Getting Started
 ---------------
 
-Start by creating some files containing the definitions for the messages,
-signals and network.
+Start by creating some files for the definitions for the messages, signals,
+nodes, and network:
 
-Create a message file called `messages.json` with the following content:
+*messages.json*:
 
 ```json
 [
@@ -83,8 +83,7 @@ Create a message file called `messages.json` with the following content:
 ]
 ```
 
-Create another file for the node definitions called `nodes.json` and add the
-following content:
+*nodes.json*:
 
 ```json
 [
@@ -100,8 +99,7 @@ following content:
 ]
 ```
 
-Meddela needs to know about the actual nodes in the network. Create a new file
-called `robot.json` and add the following content:
+*robot.json*:
 
 ```json
 {
@@ -114,10 +112,10 @@ called `robot.json` and add the following content:
 }
 ```
 
-Now Meddela knows about all the messages, their signals and nodes in the network
- This information can now be used when generating the desired code. A template
-must first be created so add the following content to a new template file called
-`structs.c.txt`:
+Now Meddela knows about all the messages, their signals and nodes in the
+network. This information can now be used when generating the desired code but
+first a template must first be created so add the following content to a new
+file called *structs.c.txt*:
 
 ```
 /* Message struct typedefs */
@@ -131,8 +129,14 @@ typedef struct {{ message.name }}_s {
 {% endfor -%}
 ```
 
-Run Meddela and provide the node ID to generate code for:
+Run Meddela and provide the file paths and node ID to generate the code:
 
 ```sh
 python -m meddela --messages=messages.json --nodes=nodes.json --config=robot.json --id=0x11 --template=structs.c.txt
+```
+
+The output can be piped to a file like this:
+
+```sh
+python -m meddela --messages=messages.json --nodes=nodes.json --config=robot.json --id=0x11 --template=structs.c.txt > structs.c
 ```
