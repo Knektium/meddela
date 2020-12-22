@@ -156,15 +156,18 @@ class Message:
 class Node:
     rx_messages = []
     tx_messages = []
+    all_messages = []
 
     def __init__(self, name):
         self.name = name
 
     def add_rx_message(self, message):
         self.rx_messages.append(message)
+        self.all_messages.append(message)
 
     def add_tx_message(self, message):
         self.tx_messages.append(message)
+        self.all_messages.append(message)
 
     @classmethod
     def get_from_json(cls, data, messages):

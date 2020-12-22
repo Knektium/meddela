@@ -15,8 +15,8 @@ from .message import (
     MSG_ID_OFFSET,
 )
 
-#jinja_env = jinja2.Environment()
-#jinja_env.filters["rx"] = 
+jinja_env = jinja2.Environment()
+jinja_env.filters["hex"] = hex
 
 
 def main():
@@ -96,31 +96,11 @@ def main():
             continue
 
         with open(template_argument) as template_file:
-            template = jinja2.Template(template_file.read())
-            node_messages = [
-                {
-                    'type': 'rx',
-                    'name': m.name,
-                    'id': hex(m.get_listen_id()),
-                    'mask': hex(m.get_mask()),
-                    'signals': m.signals,
-                }
-                for m in node.rx_messages
-            ] + [
-                {
-                    'type': 'tx',
-                    'name': m.name,
-                    'id': hex(m.get_broadcast_id(node_id)),
-                    'mask': hex(m.get_mask()),
-                    'signals': m.signals,
-                }
-                for m in node.tx_messages
-            ]
+            template = jinja_env.from_string(template_file.read())
 
             print(template.render(
-                node_id=hex(node_id),
+                node_id=node_id,
                 node=node,
-                messages=node_messages,
                 MSG_ID_SIZE=MSG_ID_SIZE,
                 MSG_ID_OFFSET=MSG_ID_OFFSET,
                 NODE_ID_SIZE=NODE_ID_SIZE,

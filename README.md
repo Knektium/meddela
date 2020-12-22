@@ -133,7 +133,7 @@ file called *structs.c.txt*:
 
 ```
 /* Message struct typedefs */
-{% for message in messages -%}
+{% for message in node.all_messages -%}
 typedef struct {{ message.name }}_s {
 {%- for signal in message.signals %}
     uint{{ signal.get_word_size(8) * 8 }}_t {{ signal.name }};
@@ -160,7 +160,7 @@ Template Context
 
 The template context has the following values:
 
-    node_id             Node ID (hexadecimal string)
+    node_id             Node ID (int)
     node                Node object
     messages            List of Message objects
     MSG_ID_OFFSET       Position of the 8-bit message ID in the 29-bit CAN message ID
@@ -172,13 +172,19 @@ The template context has the following values:
 Get the number of messages the node receives and transmitts:
 
 ```
-{{ messages|count }}
+{{ node.all_messages|count }}
+```
+
+Get the node ID in hexadecimal:
+
+```
+{{ node_id|hex }}
 ```
 
 Loop through all messages and their signals:
 
 ```
-{% for message in messages %}
+{% for message in node.all_messages %}
     typedef struct {{ message.name }}_s {
     {%- for signal in message.signals %}
         {{ signal.get_word_size(8) * 8 }}_t {{ signal.name }};
