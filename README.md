@@ -162,10 +162,69 @@ The template context has the following values:
 
     node_id             Node ID (int)
     node                Node object
-    messages            List of Message objects
     MSG_ID_OFFSET       Position of the 8-bit message ID in the 29-bit CAN message ID
     FROM_NODE_ID_OFFSET Position of the 8-bit sender node ID in the 29-bit CAN message ID
     TO_NODE_ID_OFFSET   Position of the 8-bit recipient node ID in the 29-bit CAN message ID
+
+### Node
+
+Attributes:
+
+    rx_messages         List of Message objects being received by the node
+    tx_messages         List of Message objects being transmitted by the node
+    all_messages        List of Message objects being received or transmitted by the node
+
+### Message
+
+Attributes:
+
+    id                  Node ID
+    name                Node name
+    priority            Priority (0 - 15, lower has higher priority)
+    signals             List of Signal objects that the message contains
+
+Methods:
+
+    get_mask()
+        Returns the bit mask for CAN message ID filtering.
+
+    get_id(from_node_id=0, to_node_id=0)
+        Returns the full CAN message ID with priority, to, from and message ID.
+
+    get_broadcast_id(from_node_id)
+        Short for get_id(from_node_id=from_node_id).
+
+    get_listen_id()
+        Short for get_id().
+
+### Signal
+
+Attributes:
+
+    name                Signal name
+    offset              The bit offset in the CAN frame
+    size                The bit size of the signal
+    endianness          'little' or 'big'
+    display_type        Data type, used for display purposes
+
+Methods:
+
+    get_word_offset(width)
+        Returns the index of the word (of the provided width) the signal's first bit is located in.
+
+    get_word_size(width)
+        Returns the number of words (of the provided width) the signal will have bits in.
+
+    get_word_mask(word_offset, width)
+        Returns the signal's bit mask for the provided word index and width.
+
+    get_words(width)
+        Returns a list of dicts with the folliwing structure:
+        {
+            'offset': 0,       # The word index
+            'bit_offset': 1,   # The bit offset in the word
+            'mask': 255        # The signal's bit mask in the word
+        }
 
 ### Examples:
 
