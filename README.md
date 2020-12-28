@@ -251,3 +251,61 @@ Loop through all messages and their signals:
     } {{ message.name }}_t;
 {% endfor -%}
 ```
+
+Message File Structure
+----------------------
+
+The message file should contain a JSON list of message definitions where each
+message has an ID, name, priority, and a list of signals. Each signal should
+have a name, size and offset in message data (in bits), and an optional
+display type that tells the tools how it should be displayed:
+
+    {
+        "id": "0x01",
+        "name": "WheelControl",
+        "priority": "0xA",
+        "signals":  [
+            {
+                "name": "Speed",
+                "size": "0x10",
+                "offset": "0x0"
+            },
+            {
+                "name": "Direction",
+                "size": "0x2",
+                "offset": "0x10",
+                "displayType": "Direction"
+            }
+        ]
+    }
+
+Node File Structure
+-------------------
+
+The node file should contain a JSON list of node definitions where each node
+has a name, a list of messages it receives, and a list of messages it sends::
+
+    {
+        "name": "Wheel",
+        "rx": [
+            "WheelControl"
+        ],
+        "tx":  [
+            "WheelStatus"
+        ]
+    }
+
+Config File Structure
+---------------------
+
+The config file should contain a JSON object that has metadata about the CAN
+network, the actual nodes and their IDs and names. It should have the following structure:
+
+{
+    "configurator": "Jack",
+    "description": "My Robot",
+    "nodes": [
+        ["Wheel", "0x11", "Right wheel"],
+        ["Wheel", "0x12", "Left wheel"]
+    ]
+}
