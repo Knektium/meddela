@@ -321,7 +321,7 @@ def main():
         data = json.load(json_data)
 
         for message_data in data:
-            message = Message.get_message_from_json(message_data)
+            message = Message.get_from_json(message_data)
             messages[message.id] = message
             messages[message.name] = message
 

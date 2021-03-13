@@ -154,12 +154,11 @@ class Message:
         return "{} ({})".format(hex(self.id), self.name)
 
 class Node:
-    rx_messages = []
-    tx_messages = []
-    all_messages = []
-
     def __init__(self, name):
         self.name = name
+        self.rx_messages = []
+        self.tx_messages = []
+        self.all_messages = []
 
     def add_rx_message(self, message):
         self.rx_messages.append(message)
