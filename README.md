@@ -279,6 +279,10 @@ display type that tells the tools how it should be displayed:
         ]
     }
 
+Or it could include a file with the same structure (a list of messages):
+
+    { "file": "path/to/messages.json" }
+
 Node File Structure
 -------------------
 
@@ -294,6 +298,10 @@ has a name, a list of messages it receives, and a list of messages it sends::
             "WheelStatus"
         ]
     }
+
+Or it could include a file with the same structure (a list of nodes):
+
+    { "file": "path/to/nodes.json" }
 
 Config File Structure
 ---------------------

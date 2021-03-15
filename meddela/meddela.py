@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import os
 import sys
 import getopt
 import json
@@ -18,6 +19,20 @@ from .message import (
 jinja_env = jinja2.Environment()
 jinja_env.filters["hex"] = hex
 
+
+def get_instances_from_data(filename, classname, **kwargs):
+    with open(filename) as json_data:
+        data = json.load(json_data)
+
+        for instance_data in data:
+            if "file" in instance_data:
+                yield from get_instances_from_data(
+                    os.path.dirname(filename) + "/" + instance_data["file"],
+                    classname,
+                    **kwargs
+                )
+            else:
+                yield classname.get_from_json(instance_data, **kwargs)
 
 def main():
     message_file = None
@@ -67,29 +82,24 @@ def main():
         print("Missing 'id' argument")
         sys.exit(1)
 
-    with open(message_file) as json_data:
-        data = json.load(json_data)
+    for message in get_instances_from_data(message_file, Message):
+        messages[message.name] = message
 
-        for message_data in data:
-            message = Message.get_from_json(message_data)
-            messages[message.name] = message
-
-    with open(node_file) as json_data:
-        data = json.load(json_data)
-
-        for node_data in data:
-            node = Node.get_from_json(node_data, messages)
-            nodes[node.name] = node
+    for node in get_instances_from_data(node_file, Node, messages=messages):
+        nodes[node.name] = node
 
     with open(config_file) as json_data:
         data = json.load(json_data)
 
-        for node_config_data in data["nodes"]:
-            node = nodes[node_config_data[0]]
-            description = node_config_data[2]
-            id = int(node_config_data[1], 16)
+        try:
+            for node_config_data in data["nodes"]:
+                node = nodes[node_config_data[0]]
+                description = node_config_data[2]
+                id = int(node_config_data[1], 16)
 
-            node_instances.append((id, description, node))
+                node_instances.append((id, description, node))
+        except KeyError as error:
+            print("{}: The node {} is not defined.".format(config_file, error))
 
     for node_id, description, node in node_instances:
         if not node_id == requested_node:
