@@ -9,3 +9,9 @@ from .message import (
     MSG_ID_SIZE,
     MSG_ID_OFFSET,
 )
+from .input import (
+    load_messages_from_file,
+    load_nodes_from_file,
+    load_enums_from_file,
+    load_config_from_file,
+)

@@ -11,7 +11,8 @@ import urwid
 
 from meddela import (
     Message,
-    Enum,
+    load_messages_from_file,
+    load_enums_from_file,
 )
 
 
@@ -91,6 +92,7 @@ def get_message_and_data_from_conf(message_conf):
         message = messages[message_conf['messageName']]
 
         yield (
+            int(message_conf["recipient_node_id"], 16),
             message,
             message.get_data_from_signal_values(message_conf['signalValues'])
         )
@@ -102,9 +104,9 @@ def exit_on_q(key):
     key_conf = key_mapping.get(key, None)
 
     if key_conf:
-        for message, data in get_message_and_data_from_conf(key_conf['sendMessages']):
+        for recipient_id, message, data in get_message_and_data_from_conf(key_conf['sendMessages']):
             try:
-                serial_port.write(to_pdu(message.get_id(), data))
+                serial_port.write(to_pdu(message.get_id(to_node_id=recipient_id), data))
             except TypeError:
                 pass
 
@@ -278,6 +280,8 @@ def main():
     global table_body
     global message_details
     global key_mapping
+    global messages
+    global enums
 
     message_file = None
     port_file = None
@@ -317,20 +321,10 @@ def main():
         print("Missing 'port' argument")
         print_usage_and_exit()
 
-    with open(message_file) as json_data:
-        data = json.load(json_data)
-
-        for message_data in data:
-            message = Message.get_from_json(message_data)
-            messages[message.id] = message
-            messages[message.name] = message
+    messages = load_messages_from_file(message_file)
 
     if enum_file:
-        with open(enum_file) as json_data:
-            data = json.load(json_data)
-
-            for name in data:
-                enums[name] = Enum(name, data[name])
+        enums = load_enums_from_file(enum_file)
 
     palette = [
         (None, 'light blue', 'white'),

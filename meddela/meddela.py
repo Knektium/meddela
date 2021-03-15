@@ -1,5 +1,4 @@
 #!/usr/bin/python
-import os
 import sys
 import getopt
 import json
@@ -15,24 +14,15 @@ from .message import (
     MSG_ID_SIZE,
     MSG_ID_OFFSET,
 )
+from .input import (
+    load_messages_from_file,
+    load_nodes_from_file,
+    load_config_from_file,
+)
+
 
 jinja_env = jinja2.Environment()
 jinja_env.filters["hex"] = hex
-
-
-def get_instances_from_data(filename, classname, **kwargs):
-    with open(filename) as json_data:
-        data = json.load(json_data)
-
-        for instance_data in data:
-            if "file" in instance_data:
-                yield from get_instances_from_data(
-                    os.path.dirname(filename) + "/" + instance_data["file"],
-                    classname,
-                    **kwargs
-                )
-            else:
-                yield classname.get_from_json(instance_data, **kwargs)
 
 def main():
     message_file = None
@@ -82,24 +72,9 @@ def main():
         print("Missing 'id' argument")
         sys.exit(1)
 
-    for message in get_instances_from_data(message_file, Message):
-        messages[message.name] = message
-
-    for node in get_instances_from_data(node_file, Node, messages=messages):
-        nodes[node.name] = node
-
-    with open(config_file) as json_data:
-        data = json.load(json_data)
-
-        try:
-            for node_config_data in data["nodes"]:
-                node = nodes[node_config_data[0]]
-                description = node_config_data[2]
-                id = int(node_config_data[1], 16)
-
-                node_instances.append((id, description, node))
-        except KeyError as error:
-            print("{}: The node {} is not defined.".format(config_file, error))
+    messages = load_messages_from_file(message_file)
+    nodes = load_nodes_from_file(node_file, messages=messages)
+    node_instances = load_config_from_file(config_file, nodes=nodes)
 
     for node_id, description, node in node_instances:
         if not node_id == requested_node:
