@@ -11,7 +11,7 @@ setuptools.setup(
     description="Handle CAN message configuration in JSON",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/CodileAB/meddela",
+    url="https://github.com/Knektium/meddela",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
