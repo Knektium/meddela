@@ -163,13 +163,13 @@ typedef struct {{ message.name }}_s {
 Run Meddela and provide the file paths and node ID to generate the code:
 
 ```sh
-python -m meddela --config=robot.json --id=0x11 --template=structs.c.txt
+python -m meddela render --config=robot.json --id=0x11 --template=structs.c.txt
 ```
 
 The output can be piped to a file like this:
 
 ```sh
-python -m meddela --config=robot.json --id=0x11 --template=structs.c.txt > structs.c
+python -m meddela render --config=robot.json --id=0x11 --template=structs.c.txt > structs.c
 ```
 
 Template Context
