@@ -27,7 +27,7 @@ Installation
 Clone this repository:
 
 ```sh
-git clone https://github.com/CodileAB/meddela
+git clone https://github.com/Knektium/meddela
 ```
 
 Then use pip to install it:
@@ -44,6 +44,8 @@ Start by creating some files for the definitions for the messages, signals,
 nodes, and network:
 
 *messages.json*:
+
+(The content of this file can be places directly in the `messages` field in the `robot.json` file.)
 
 ```json
 [
@@ -99,6 +101,8 @@ nodes, and network:
 
 *nodes.json*:
 
+(The content of this file can be places directly in the `nodes` field in the `robot.json` file.)
+
 ```json
 [
     {
@@ -119,9 +123,22 @@ nodes, and network:
 {
     "configurator": "Jack",
     "description": "My Robot",
-    "nodes": [
+    "nodeInstances": [
         ["Wheel", "0x11", "Right wheel"],
         ["Wheel", "0x12", "Left wheel"]
+    ],
+    "enums": {
+        "Direction": {
+            "NONE": "0x0",
+            "FORWARD": "0x1",
+            "BACKWARD": "0x2"
+        }
+    },
+    "nodes": [
+        { "file": "nodes.json" }
+    ],
+    "messages": [
+        { "file": "messages.json" }
     ]
 }
 ```
@@ -146,13 +163,13 @@ typedef struct {{ message.name }}_s {
 Run Meddela and provide the file paths and node ID to generate the code:
 
 ```sh
-python -m meddela --messages=messages.json --nodes=nodes.json --config=robot.json --id=0x11 --template=structs.c.txt
+python -m meddela --config=robot.json --id=0x11 --template=structs.c.txt
 ```
 
 The output can be piped to a file like this:
 
 ```sh
-python -m meddela --messages=messages.json --nodes=nodes.json --config=robot.json --id=0x11 --template=structs.c.txt > structs.c
+python -m meddela --config=robot.json --id=0x11 --template=structs.c.txt > structs.c
 ```
 
 Template Context
@@ -315,5 +332,18 @@ network, the actual nodes and their IDs and names. It should have the following 
     "nodes": [
         ["Wheel", "0x11", "Right wheel"],
         ["Wheel", "0x12", "Left wheel"]
+    ]
+    "enums": {
+        "Direction": {
+            "NONE": "0x0",
+            "FORWARD": "0x1",
+            "BACKWARD": "0x2"
+        }
+    },
+    "nodes": [
+        // Same as the node file
+    ],
+    "messages": [
+        // Same as the message file
     ]
 }
