@@ -54,20 +54,17 @@ def main():
         sys.exit(1)
 
     node_instances, nodes, messages, enums = load_config_from_file(config_file)
+    node_id, description, node = node_instances[requested_node]
 
-    for node_id, description, node in node_instances:
-        if not node_id == requested_node:
-            continue
+    with open(template_argument) as template_file:
+        template = jinja_env.from_string(template_file.read())
 
-        with open(template_argument) as template_file:
-            template = jinja_env.from_string(template_file.read())
-
-            print(template.render(
-                node_id=node_id,
-                node=node,
-                MSG_ID_SIZE=MSG_ID_SIZE,
-                MSG_ID_OFFSET=MSG_ID_OFFSET,
-                NODE_ID_SIZE=NODE_ID_SIZE,
-                FROM_NODE_ID_OFFSET=FROM_NODE_ID_OFFSET,
-                TO_NODE_ID_OFFSET=TO_NODE_ID_OFFSET,
-            ))
+        print(template.render(
+            node_id=node_id,
+            node=node,
+            MSG_ID_SIZE=MSG_ID_SIZE,
+            MSG_ID_OFFSET=MSG_ID_OFFSET,
+            NODE_ID_SIZE=NODE_ID_SIZE,
+            FROM_NODE_ID_OFFSET=FROM_NODE_ID_OFFSET,
+            TO_NODE_ID_OFFSET=TO_NODE_ID_OFFSET,
+        ))

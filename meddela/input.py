@@ -102,7 +102,7 @@ def load_enums_from_file(enum_file):
     return enums
 
 def load_config_from_file(config_file):
-    node_instances = []
+    node_instances = {}
     nodes = {}
     messages = {}
     enums = {}
@@ -143,7 +143,8 @@ def load_config_from_file(config_file):
                 description = node_instance[2]
                 id = int(node_instance[1], 16)
 
-                node_instances.append((id, description, node))
+                node_instances[id] = (id, description, node)
+                node_instances[description] = (id, description, node)
             except KeyError as error:
                 print("{}: The node {} is not defined.".format(config_file, error), file=sys.stderr)
                 sys.exit(1)
