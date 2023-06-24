@@ -4,6 +4,14 @@ TO_NODE_ID_OFFSET = 12
 MSG_ID_SIZE = 8
 MSG_ID_OFFSET = 20
 
+def get_hash(byte_string):
+    hash = 0
+
+    for byte in byte_string:
+        hash = (37 * hash + byte) % 0xFFFFFF
+
+    return hash
+
 class Signal:
     def __init__(self, name, offset, size, display_type="Hex", endianness="little"):
         self.name = name
@@ -73,6 +81,17 @@ class Signal:
             value |= ((data[word['offset']] & word['mask']) >> word['bit_offset']) << index * 8
 
         return value
+
+    @property
+    def hash(self):
+        string = ":".join([
+            self.name,
+            str(self.size),
+            self.display_type,
+        ]).encode()
+
+        return get_hash(string)
+
 
 class Message:
     def __init__(self, id, name, priority):
@@ -149,6 +168,15 @@ class Message:
                 pass
 
         return data
+
+    @property
+    def hash(self):
+        hash = 0
+
+        for signal in self.signals:
+            hash = hash ^ signal.hash
+
+        return hash
 
     def __str__(self):
         return "{} ({})".format(hex(self.id), self.name)
