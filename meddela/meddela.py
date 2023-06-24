@@ -1,7 +1,6 @@
 #!/usr/bin/python
 import sys
 import getopt
-import json
 import jinja2
 
 from .message import (
@@ -15,8 +14,6 @@ from .message import (
     MSG_ID_OFFSET,
 )
 from .input import (
-    load_messages_from_file,
-    load_nodes_from_file,
     load_config_from_file,
 )
 
@@ -25,40 +22,24 @@ jinja_env = jinja2.Environment()
 jinja_env.filters["hex"] = hex
 
 def main():
-    message_file = None
-    node_file = None
     config_file = None
     requested_node = None
     template_argument = None
 
-    messages = {}
-    nodes = {}
     node_instances = []
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:],  "", ["messages=", "nodes=", "config=", "id=", "template="])
+        opts, args = getopt.getopt(sys.argv[1:],  "", ["config=", "id=", "template="])
     except getopt.GetoptError:
         sys.exit(1)
 
     for opt, arg in opts:
-        if opt == "--messages":
-            message_file = arg
-        elif opt == "--nodes":
-            node_file = arg
-        elif opt == "--config":
+        if opt == "--config":
             config_file = arg
         elif opt == "--template":
             template_argument = arg
         elif opt == "--id":
             requested_node = int(arg, 16)
-
-    if not message_file:
-        print("Missing 'messages' argument")
-        sys.exit(1)
-
-    if not node_file:
-        print("Missing 'nodes' argument")
-        sys.exit(1)
 
     if not config_file:
         print("Missing 'config' argument")
@@ -72,9 +53,7 @@ def main():
         print("Missing 'id' argument")
         sys.exit(1)
 
-    messages = load_messages_from_file(message_file)
-    nodes = load_nodes_from_file(node_file, messages=messages)
-    node_instances = load_config_from_file(config_file, nodes=nodes)
+    node_instances, nodes, messages, enums = load_config_from_file(config_file)
 
     for node_id, description, node in node_instances:
         if not node_id == requested_node:
