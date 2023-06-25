@@ -13,12 +13,12 @@ def get_hash(byte_string):
     return hash
 
 class Signal:
-    def __init__(self, name, offset, size, display_type="Hex", endianness="little"):
+    def __init__(self, name, offset, size, type="uint", endianness="little"):
         self.name = name
         self.offset = offset
         self.size = size
         self.endianness = endianness
-        self.display_type = display_type
+        self.type = type
 
     def get_word_offset(self, width):
         return self.offset // width
@@ -63,7 +63,7 @@ class Signal:
         name = data["name"]
         size = int(data["size"], 16)
         offset = int(data["offset"], 16)
-        display_type = data.get("displayType", "Hex")
+        type = data.get("type", "uint")
         endianness = data.get("endianness", "little")
     
         return cls(
@@ -71,7 +71,7 @@ class Signal:
             size=size,
             offset=offset,
             endianness=endianness,
-            display_type=display_type,
+            type=type,
         )
 
     def get_value_from_data(self, data):
@@ -87,7 +87,7 @@ class Signal:
         string = ":".join([
             self.name,
             str(self.size),
-            self.display_type,
+            self.type,
         ]).encode()
 
         return get_hash(string)

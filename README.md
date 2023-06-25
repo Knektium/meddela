@@ -57,13 +57,14 @@ nodes, and network:
             {
                 "name": "Speed",
                 "size": "0x10",
-                "offset": "0x0"
+                "offset": "0x0",
+                "type": "uint"
             },
             {
                 "name": "Direction",
                 "size": "0x2",
                 "offset": "0x10",
-                "displayType": "Direction"
+                "type": "Direction"
             }
         ]
     },
@@ -75,24 +76,26 @@ nodes, and network:
             {
                 "name": "RevolutionsPerMinute",
                 "size": "0x10",
-                "offset": "0x0"
+                "offset": "0x0",
+                "type": "uint"
             },
             {
                 "name": "OvertemperatureShutdown",
                 "size": "0x01",
-                "offset": "0x10"
+                "offset": "0x10",
+                "type": "bool"
             },
             {
                 "name": "CurrentLimitation",
                 "size": "0x01",
                 "offset": "0x11",
-                "displayType": "YesNo"
+                "type": "bool"
             },
             {
                 "name": "Direction",
                 "size": "0x02",
                 "offset": "0x12",
-                "displayType": "Direction"
+                "type": "Direction"
             }
         ]
     }
@@ -236,7 +239,8 @@ Attributes:
     offset              The bit offset in the CAN frame
     size                The bit size of the signal
     endianness          'little' or 'big'
-    display_type        Data type, used for display purposes
+    type                Data type (should be one of uint, int, bool or an
+                        enum specified in the config file)
 
 Methods:
 
@@ -299,13 +303,14 @@ display type that tells the tools how it should be displayed:
             {
                 "name": "Speed",
                 "size": "0x10",
-                "offset": "0x0"
+                "offset": "0x0",
+                "type": "uint"
             },
             {
                 "name": "Direction",
                 "size": "0x2",
                 "offset": "0x10",
-                "displayType": "Direction"
+                "type": "Direction"
             }
         ]
     }
@@ -340,6 +345,7 @@ Config File Structure
 The config file should contain a JSON object that has metadata about the CAN
 network, the actual nodes and their IDs and names. It should have the following structure:
 
+```json
 {
     "configurator": "Jack",
     "description": "My Robot",
@@ -361,3 +367,4 @@ network, the actual nodes and their IDs and names. It should have the following 
         // Same as the message file
     ]
 }
+```
