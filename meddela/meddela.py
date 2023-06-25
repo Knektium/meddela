@@ -42,7 +42,7 @@ def compress(config_file):
 def render(config_file, template_file, requested_node):
     config = load_config_from_file(config_file)
     node_instances, nodes, messages, enums = create_instances_from_config(config)
-    node_id, description, node = node_instances[requested_node]
+    node_id, node_name, node = node_instances[requested_node]
 
     try:
         with open(template_file) as file:

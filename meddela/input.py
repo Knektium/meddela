@@ -110,16 +110,19 @@ def create_instances_from_config(config):
     )
     enums = load_enums_from_dict(config["enums"])
 
-    for node_instance in config["nodeInstances"]:
-        try:
-            node = nodes[node_instance[0]]
-            description = node_instance[2]
-            id = int(node_instance[1], 16)
+    for node_id in config["nodeInstances"]:
+        data = config["nodeInstances"][node_id]
 
-            node_instances[id] = (id, description, node)
-            node_instances[description] = (id, description, node)
+        try:
+            id = int(node_id, 16)
+            node_type = data["type"]
+            node_name = data["name"]
+            node = nodes[node_type]
+
+            node_instances[id] = (id, node_type, node)
+            node_instances[node_name] = (id, node_type, node)
         except KeyError:
-            print("The node {} is not defined.".format(node_instance[0]), file=sys.stderr)
+            print("The node {} is not defined.".format(node_type), file=sys.stderr)
             sys.exit(1)
 
     return (node_instances, nodes, messages, enums)

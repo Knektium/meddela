@@ -124,8 +124,22 @@ nodes, and network:
     "configurator": "Jack",
     "description": "My Robot",
     "nodeInstances": [
-        ["Wheel", "0x11", "Right wheel"],
-        ["Wheel", "0x12", "Left wheel"]
+       "0x11": {
+            "name": "RIGHT WHEEL",
+            "type": "Wheel"
+        },
+        "0x12": {
+            "name": "LEFT WHEEL",
+            "type": "Wheel"
+        },
+        "0x21": {
+            "name": "FAN",
+            "type": "Fan"
+        },
+        "0x31": {
+            "name": "BATTERY",
+            "type": "Battery"
+        }
     ],
     "enums": {
         "Direction": {
