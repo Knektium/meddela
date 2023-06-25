@@ -349,10 +349,24 @@ network, the actual nodes and their IDs and names. It should have the following 
 {
     "configurator": "Jack",
     "description": "My Robot",
-    "nodes": [
-        ["Wheel", "0x11", "Right wheel"],
-        ["Wheel", "0x12", "Left wheel"]
-    ]
+    "nodeInstances": [
+       "0x11": {
+            "name": "RIGHT WHEEL",
+            "type": "Wheel"
+        },
+        "0x12": {
+            "name": "LEFT WHEEL",
+            "type": "Wheel"
+        },
+        "0x21": {
+            "name": "FAN",
+            "type": "Fan"
+        },
+        "0x31": {
+            "name": "BATTERY",
+            "type": "Battery"
+        }
+    ],
     "enums": {
         "Direction": {
             "NONE": "0x0",
