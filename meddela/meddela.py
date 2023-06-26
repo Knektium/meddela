@@ -3,7 +3,6 @@ import sys
 import getopt
 import json
 import gzip
-import hashlib
 import jinja2
 
 from .message import (
@@ -20,6 +19,10 @@ from .input import (
     load_config_from_file,
     create_instances_from_config,
 )
+from .hash import (
+    get_hash,
+    to_base36,
+)
 
 jinja_env = jinja2.Environment()
 jinja_env.filters["hex"] = hex
@@ -30,9 +33,26 @@ def print_usage_and_exit():
 
 def compress(config_file):
     config = load_config_from_file(config_file)
+    node_instances, nodes, messages, enums = create_instances_from_config(config)
+
+    hash = 0
+
+    for message in config["messages"]:
+        hash = hash ^ messages[message["name"]].hash
+
+    for node_id in config["nodeInstances"]:
+        id, node_type, node = node_instances[int(node_id, 16)]
+        node_name = config["nodeInstances"][node_id]["name"]
+
+        hash = hash ^ node.get_hash(node_id, node_name)
+
+    for enum in enums:
+        hash = hash ^ enums[enum].hash
+
+    hash_str = to_base36(hash)
+
     json_string = json.dumps(config).encode()
-    hash = hashlib.md5(json_string).hexdigest().upper()
-    filename = hash + '.json.gz'
+    filename = hash_str + '.json.gz'
 
     with gzip.open(filename, 'wb') as file:
         file.write(json_string)

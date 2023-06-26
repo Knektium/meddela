@@ -1,16 +1,13 @@
+from .hash import (
+    get_hash,
+    to_base36,
+)
+
 NODE_ID_SIZE = 8
 FROM_NODE_ID_OFFSET = 4
 TO_NODE_ID_OFFSET = 12
 MSG_ID_SIZE = 8
 MSG_ID_OFFSET = 20
-
-def get_hash(byte_string):
-    hash = 0
-
-    for byte in byte_string:
-        hash = (37 * hash + byte) % 0xFFFFFF
-
-    return hash
 
 class Signal:
     def __init__(self, name, offset, size, type="uint", endianness="little"):
@@ -171,12 +168,18 @@ class Message:
 
     @property
     def hash(self):
-        hash = 0
+        signal_hash = 0
 
         for signal in self.signals:
-            hash = hash ^ signal.hash
+            signal_hash = signal_hash ^ signal.hash
 
-        return hash
+        return get_hash(
+            ":".join([
+                str(self.id),
+                self.name,
+                to_base36(signal_hash),
+            ]).encode()
+        )
 
     def __str__(self):
         return "{} ({})".format(hex(self.id), self.name)
@@ -218,6 +221,26 @@ class Node:
     
         return node
 
+    def get_hash(self, id, instance_name):
+        rx_hash = 0
+        tx_hash = 0
+
+        for message in self.rx_messages:
+            rx_hash = rx_hash ^ get_hash(message.name.encode())
+
+        for message in self.tx_messages:
+            tx_hash = tx_hash ^ get_hash(message.name.encode())
+
+        return get_hash(
+            ":".join([
+                self.name,
+                to_base36(rx_hash),
+                to_base36(tx_hash),
+                instance_name,
+                id,
+            ]).encode()
+        )
+
     def __str__(self):
         return "{}".format(self.name)
 
@@ -235,6 +258,19 @@ class Enum:
                 return name
 
         return None
+
+    @property
+    def hash(self):
+        member_hash = 0
+
+        for name in self.members:
+            member_hash = member_hash ^ get_hash(
+                (name + ":" + str(self.members[name])).encode()
+            )
+
+        return get_hash(
+            (self.name + ":" + to_base36(member_hash)).encode()
+        )
 
     def __str__(self):
         return "{}".format(self.name)
